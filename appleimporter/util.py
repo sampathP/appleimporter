@@ -9,7 +9,7 @@ class excmd(object):
 
     def __init__(self, cmd=None):
         self.pstatus = None
-        self.cmd = cmd
+        self.execmd = cmd
 
     def cmdrun(self, pargs=None):
         """ run the command
@@ -17,10 +17,10 @@ class excmd(object):
         """
 
         try:
-            self.cmdrun = subprocess.Popen(['ls -al'],
+            self.runcmd = subprocess.Popen(self.execmd,
                                            stdin=subprocess.PIPE,
                                            stdout=subprocess.PIPE,
                                            stderr=subprocess.PIPE)
         except subprocess.CalledProcessError as e:
-            print e.returncode
-            print e.output
+            print (e.returncode)
+            print (e.output)
