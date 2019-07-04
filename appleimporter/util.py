@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-
-
-import subprocess
 import os
+import subprocess
+import sys
+import traceback
 
 
 class excmd(object):
@@ -48,3 +48,40 @@ class excmd(object):
         self.process.poll()
         if not self.process.returncode():
             self.process.terminate()
+
+
+class Error(Exception):
+    pass
+
+
+class ProcessExeError(Error):
+    # Raised custom error class
+    def __init__(self, message):
+        self. message = message
+
+
+def call_process(cmd, spargs=None):
+
+    try:
+        proc = subprocess.Popen(cmd,
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE)
+        pout, perror = proc.communicate()
+
+        if perror and 'Error' in perror.decode('utf-8').split()[0]:
+            raise(ProcessExeError(perror.decode('utf-8')))
+    except ProcessExeError as e:
+        emsg = e.message
+        print ("processs exception:", emsg)
+    except OSError as e:
+        emsg = e.strerror
+        print ("exception catch:", emsg)
+    except subprocess.CalledProcessError as e:
+        emsg = e.message
+        print ("exception catch:", emsg)
+    except Exception as e:
+        t, v, tb = sys.exc_info()
+        emsg = traceback.format_exception(t, v, tb)
+        print ("exception catch:", emsg)
+    else:
+        return pout.decode('utf-8')
